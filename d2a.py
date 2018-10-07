@@ -147,6 +147,7 @@ Dialogue: Marked=0,{tstart},{tend},Scroll,NicoChu,0000,0000,0000,,{{\\a6\\move(1
         ss = self.HEADER.format(resX = self.resX, resY = self.resY)
         rows = [danmaku(*row) for row in res]
         pos = 1
+        if not rows: return ss
         told = rows[0].pos - self.delay
         for d in sorted(rows, key = lambda x: x.pos):
             if told > d.pos or pos > self.resY*0.9:
