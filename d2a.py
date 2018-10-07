@@ -114,8 +114,8 @@ PlayDepth: 32
 Timer: 100.0000
 WrapStyle: 2
 [V4+ Styles]
-Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColor, BackColour, Bold, 
-Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, 
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColor, BackColour, Bold, \
+Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, \
 Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Default,Meiryo Bold,80,11861244,11861244,0,-2147483640,-1,0,0,0,100,100,1,0.00,1,1,0,10,30,30,30,1
 Style: Static,Meiryo Bold,80,11861244,11861244,0,-2147483640,-1,0,0,0,100,100,2,0.00,1,1,0,2,0,0,0,1
@@ -124,23 +124,23 @@ Style: Scroll,Meiryo Bold,80,11861244,11861244,0,-2147483640,-1,0,0,0,100,100,2,
 Format: Marked, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     """
     EVENT = u"""
-Dialogue: Marked=0,{tstart},{tend},Scroll,NicoChu,0000,0000,0000,,{{\\a6\\move(1150,{startpos},0,{endpos})\c&HFFFFFF\\fs25}}
+Dialogue: Marked=0,{tstart},{tend},Scroll,NicoChu,0000,0000,0000,,{{\\a6\\move(1150,{startpos},0,{endpos})\c&HFFFFFF\\fs25}}{content}
     """
     resX = 640
     resY = 360
     delay = 400
     stepSize = 20
-    def __init__(self,x=640,y=360, delay=400, stepSize=20):
+    def __init__(self,x=640,y=360, delay=500, stepSize=20):
         self.resX = x
         self.resY = y
         self.delay = delay
         self.stepSize =stepSize
     def convert(self,timepos):
-        TIMESTR = u"{hour:02d}:{minute:02d}:{second:02d}"
+        TIMESTR = u"{hour:02d}:{minute:02d}:{second:02.2f}"
         timepos /= 100.0
         hh = int(timepos / 3600)
         mm = int((timepos - hh*3600)/60)
-        ss = int(round((timepos - hh*3600 - mm*60), 2))
+        ss = round((timepos - hh*3600 - mm*60), 2)
         return TIMESTR.format(hour = hh,
                               minute=mm, second=ss)
     def __call__(self, res):
@@ -150,16 +150,16 @@ Dialogue: Marked=0,{tstart},{tend},Scroll,NicoChu,0000,0000,0000,,{{\\a6\\move(1
         if not rows: return ss
         told = rows[0].pos - self.delay
         for d in sorted(rows, key = lambda x: x.pos):
-            if told > d.pos or pos > self.resY*0.9:
+            if told+self.delay < d.pos or pos >= self.resY:
                 pos = 1
                 told += self.delay
             ss += self.EVENT.format(
                 tstart = self.convert(d.pos),
                 tend = self.convert(d.pos + self.delay),
                 startpos = pos,
-                endpos = pos
+                endpos = pos,
+                content = d.content
             )
-            ss += d.content
             pos += self.stepSize
         return ss
         
