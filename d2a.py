@@ -130,7 +130,7 @@ Dialogue: Marked=0,{tstart},{tend},Scroll,NicoChu,0000,0000,0000,,{{\\a6\\move(1
     resY = 360
     delay = 400
     stepSize = 20
-    def __init__(self,x=640,y=360, delay=500, stepSize=20):
+    def __init__(self,x=640,y=360, delay=400, stepSize=20):
         self.resX = x
         self.resY = y
         self.delay = delay
@@ -218,7 +218,7 @@ if __name__=="__main__":
             try:
                 db.add(fname, parseXmlHimawari(fname))
                 print ("Added {}".format(fname))
-            except ET.ParseError as e:
+            except:
                 continue
         if args.mode == "scan":
             sys.exit(0)
